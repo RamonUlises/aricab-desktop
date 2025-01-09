@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.table-products th, .table-products td {
+  border: 1px solid #000; /* Borde para celdas del encabezado y cuerpo */
+}
