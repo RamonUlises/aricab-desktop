@@ -1,6 +1,7 @@
 import { server } from "../lib/server";
 import { ActuType } from "../types/actu";
 import { invoke } from "@tauri-apps/api/core";
+import { openUrl } from '@tauri-apps/plugin-opener';
 
 export async function actualizacion() {
   try {
@@ -11,7 +12,7 @@ export async function actualizacion() {
     });
 
     const data: ActuType = await response.json();
-    const currentVersion = "1.0.8";
+    const currentVersion = "1.1.0";
 
     if (data.version !== currentVersion) {
       const userResponse = confirm(
@@ -22,6 +23,12 @@ export async function actualizacion() {
         const platformDesk = await invoke<string>('sistema_operativo');
 
         if(platformDesk === "otro") return;
+
+        if(platformDesk === "windows") {
+          const url = data.platforms.window.url;
+          openUrl(url);
+          return;
+        }
         
         const downloadUrl = platformDesk === "windows" ? data.platforms.window.url : data.platforms.linux.url;
         

@@ -16,7 +16,13 @@ export const Navbar = () => {
             <Link className="hover:text-green-500 transition-colors duration-500" to={"/productos"}>Productos</Link>
           </li>
           <li>
+            <Link className="hover:text-green-500 transition-colors duration-500" to={"/clientes"}>Clientes</Link>
+          </li>
+          <li>
             <Link className="hover:text-green-500 transition-colors duration-500" to={"/rutas"}>Rutas</Link>
+          </li>
+          <li>
+            <Link className="hover:text-green-500 transition-colors duration-500" to={"/facturas"}>Facturas</Link>
           </li>
           <li>
             <Link className="hover:text-green-500 transition-colors duration-500" to={"/personal"}>Personal</Link>

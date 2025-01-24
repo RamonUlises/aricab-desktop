@@ -84,7 +84,7 @@ export default function ProductosProvider ({ children }: { children: React.React
 
   if(loading) {
     return (
-      <div className="bg-zinc-800 w-full h-full justify-center items-center">
+      <div className="bg-slate-200 w-screen h-screen flex justify-center items-center">
         <h1 className='text-3xl font-bold'>Cargando...</h1>
       </div>
     )

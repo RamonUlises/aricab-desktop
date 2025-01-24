@@ -41,7 +41,7 @@ export const AgregarProductos = () => {
       return;
     }
 
-    if(producto.precioCompra > producto.precioVenta){
+    if(parseFloat(producto.precioCompra.toString()) > parseFloat(producto.precioVenta.toString())){
       setAlerta("El precio de compra no puede ser mayor al precio de venta");
       return;
     }

@@ -10,6 +10,7 @@ export const AgregarRutas = () => {
     usuario: "",
     password: "",
   });
+  const [dias, setDias] = useState<string[]>([]);
 
   function change(name: string, value: string, type: string) {
     // si el tipo es number, y el valor trae letras, eliminarlas
@@ -50,6 +51,17 @@ export const AgregarRutas = () => {
     }
   }
 
+  function updateDias(dia: string){
+    let newArray: string[] = [];
+    if(dias.includes(dia)){
+      newArray = dias.filter(d => d !== dia);
+    } else {
+      newArray = [...dias, dia];
+    }
+
+    setDias(newArray);
+  }
+
   useEffect(() => {
     if (visible) {
       setAlerta("");
@@ -57,16 +69,17 @@ export const AgregarRutas = () => {
         usuario: "",
         password: "",
       });
+      setDias([]);
     }
   }, [visible]);
 
   return (
     <>
       <div
-        onClick={() => setVisible(true)}
+        
         className="flex justify-center absolute bottom-0 w-full mb-4 z-40"
       >
-        <button className="bg-green-600 hover:bg-green-700 transition-colors duration-300 py-2 px-4 rounded-lg text-slate-200">
+        <button onClick={() => setVisible(true)} className="bg-green-600 hover:bg-green-700 transition-colors duration-300 py-2 px-4 rounded-lg text-slate-200">
           Agregar Ruta
         </button>
       </div>
@@ -97,6 +110,18 @@ export const AgregarRutas = () => {
               value={ruta.password}
               name="password"
             />
+          </div>
+          <div>
+            <p className="mt-4 font-semibold text-center">Seleccione los días de ruta</p>
+            <div className="flex flex-row gap-1 mt-2">
+              <button onClick={() => updateDias('Lun')} type="button" className={`${dias.includes('Lun') ? 'border-green-600 text-green-600' : 'border-black'} px-1 border-2 rounded`}>Lun</button>
+              <button onClick={() => updateDias('Mar')} type="button" className={`${dias.includes('Mar') ? 'border-green-600 text-green-600' : 'border-black'} px-1 border-2 rounded`}>Mar</button>
+              <button onClick={() => updateDias('Mie')} type="button" className={`${dias.includes('Mie') ? 'border-green-600 text-green-600' : 'border-black'} px-1 border-2 rounded`}>Mie</button>
+              <button onClick={() => updateDias('Jue')} type="button" className={`${dias.includes('Jue') ? 'border-green-600 text-green-600' : 'border-black'} px-1 border-2 rounded`}>Jue</button>
+              <button onClick={() => updateDias('Vie')} type="button" className={`${dias.includes('Vie') ? 'border-green-600 text-green-600' : 'border-black'} px-1 border-2 rounded`}>Vie</button>
+              <button onClick={() => updateDias('Sab')} type="button" className={`${dias.includes('Sab') ? 'border-green-600 text-green-600' : 'border-black'} px-1 border-2 rounded`}>Sab</button>
+              <button onClick={() => updateDias('Dom')} type="button" className={`${dias.includes('Dom') ? 'border-green-600 text-green-600' : 'border-black'} px-1 border-2 rounded`}>Dom</button>
+            </div>
           </div>
           {alerta && <p className={`${alerta !== "Usuario creado" ? "text-red-500" : "text-green-500"} text-center mt-4`}>{alerta}</p>}
           <div className="flex justify-center mt-8">
