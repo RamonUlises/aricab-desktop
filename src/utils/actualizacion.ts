@@ -12,7 +12,7 @@ export async function actualizacion() {
     });
 
     const data: ActuType = await response.json();
-    const currentVersion = "1.1.0";
+    const currentVersion = "1.1.1";
 
     if (data.version !== currentVersion) {
       const userResponse = confirm(
@@ -40,8 +40,6 @@ export async function actualizacion() {
 
         if(confirmation){
           await invoke('install_update', { path: downPath });
-
-          window.location.reload();
         }
       }
     } else {

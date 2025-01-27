@@ -38,7 +38,7 @@ export const Clientes = () => {
           value={busqueda}
           onChange={filtrar}
           type="search"
-          placeholder="Buscar productos"
+          placeholder="Buscar clientes"
           className="bg-slate-400 text-black placeholder:text-black px-2 w-full max-w-[360px] outline-none rounded-md py-1 text-sm"
         />
       </div>
@@ -58,7 +58,7 @@ export const Clientes = () => {
             return (
               <div
                 key={cliente.id}
-                className="bg-slate-100 border border-green-400 px-4 py-2 rounded-md flex items-center justify-between gap-3"
+                className="bg-slate-100 border border-black px-4 py-2 rounded-md flex items-center justify-between gap-3"
               >
                 <div>
                   <EditarCliente clienteA={cliente}>

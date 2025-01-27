@@ -1,7 +1,10 @@
 use reqwest;
 use std::fs::File;
 use std::io::{copy, Write};
+use std::path::PathBuf;
 use std::process::Command;
+
+use tauri_plugin_dialog::DialogExt;
 
 #[tauri::command]
 pub fn sistema_operativo() -> &'static str {
@@ -70,7 +73,7 @@ pub fn install_update(path: String) -> Result<String, String> {
 
         match output {
             Ok(output) => {
-                if output.status.success() {
+                if output.status.success() {  
                     return Ok("La actualización en Windows se completó exitosamente.".to_string());
                 } else {
                     let error_message = String::from_utf8_lossy(&output.stderr);
@@ -89,7 +92,17 @@ pub fn install_update(path: String) -> Result<String, String> {
 
         match output {
             Ok(output) => {
-                if output.status.success() {
+                if output.status.success() {   
+                    match Command::new("pkill")
+    .args(&["-f", "aricab-desktop"])  // Usar el nombre correcto del proceso
+    .output() 
+{
+    Ok(_) => {
+        // Esperar un momento para asegurar que el proceso se cierre
+        std::thread::sleep(std::time::Duration::from_secs(1));
+    },
+    Err(e) => return Err(format!("Error al reiniciar la aplicación: {}", e)),
+}      
                     return Ok("La actualización en Linux se completó exitosamente.".to_string());
                 } else {
                     let error_message = String::from_utf8_lossy(&output.stderr);
@@ -135,3 +148,26 @@ pub fn share_pdf(pdf: Vec<u8>) -> Result<String, String> {
 
     Ok(pdf_path.to_string_lossy().to_string())
 }
+
+#[tauri::command]
+pub fn save_pdf(app_handle: tauri::AppHandle, pdf_data: Vec<u8>) -> Result<(), String> {
+
+    let file_path = app_handle
+    .dialog()
+    .file()
+    .add_filter("PDF", &["pdf"])
+    .blocking_save_file(); // Mostrar cuadro de diálogo para guardar archivo
+
+    match file_path {
+        Some(path) => {
+        // Convertir `FilePath` a `PathBuf`
+            let path = PathBuf::from(path.to_string()); // Esto convierte `FilePath` a `PathBuf`
+        
+        // Usar `PathBuf` con `File::create`
+            let mut file = File::create(path).map_err(|e| e.to_string())?;
+            file.write_all(&pdf_data).map_err(|e| e.to_string())?;
+            Ok(())
+        }
+        None => Err("No se seleccionó ninguna ruta de archivo".to_string()),
+    }
+}  

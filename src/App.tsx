@@ -8,22 +8,45 @@ import { ProductosRuta } from "./routes/ProductosRuta";
 import { Clientes } from "./routes/Clientes";
 import { Facturas } from "./routes/Facturas";
 import Providers from "./providers/Providers";
+import { useEffect, useState } from "react";
+import { TresEnRaya } from "./components/TresEnRaya";
 
 function App() {
+  // Verificar conexión a internet
+  const [connection, setConnectio] = useState(true);
+
+  useEffect(() => {
+    window.addEventListener("online", () => {
+      setConnectio(true);
+    });
+
+    window.addEventListener("offline", () => {
+      setConnectio(false);
+    });
+  }, []);
+
   return (
-    <Providers>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Inicio />} />
-          <Route path="/productos" element={<Productos />} />
-          <Route path="/rutas" element={<Rutas />} />
-          <Route path="/personal" element={<Personal />} />
-          <Route path="/clientes" element={<Clientes />} />
-          <Route path="/facturas" element={<Facturas />} />
-          <Route path="/:id/productos" element={<ProductosRuta />} />
-        </Routes>
-      </BrowserRouter>
-    </Providers>
+    <>
+      {connection ? (
+        <Providers>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Inicio />} />
+              <Route path="/productos" element={<Productos />} />
+              <Route path="/rutas" element={<Rutas />} />
+              <Route path="/personal" element={<Personal />} />
+              <Route path="/clientes" element={<Clientes />} />
+              <Route path="/facturas" element={<Facturas />} />
+              <Route path="/:id/productos" element={<ProductosRuta />} />
+            </Routes>
+          </BrowserRouter>
+        </Providers>
+      ) : (
+        <div className="bg-slate-200 w-screen h-screen flex flex-col justify-center items-center">
+          <TresEnRaya />
+        </div>
+      )}
+    </>
   );
 }
 

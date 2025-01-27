@@ -9,6 +9,25 @@
     "core:default",
     "opener:default",
     "dialog:default",
-    "os:allow-arch"
+    "dialog:allow-save",
+    "os:allow-arch",
+    "fs:write-all",
+    "fs:allow-exists",
+    {
+      "identifier": "fs:allow-read",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-write",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    }
   ]
 }

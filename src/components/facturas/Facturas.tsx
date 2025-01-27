@@ -2,7 +2,7 @@ import { FacturaType } from "@/types/facturas";
 import { useState } from "react";
 import { VerFactura } from "./VerFactura";
 import { AbonarFactura } from "./AbonarFactura";
-import { CircleDollarSign, Eye, Printer, Share2, Trash2 } from "lucide-react";
+import { CircleDollarSign, Eye, Printer, Save, Trash2 } from "lucide-react";
 import { deleteFactura } from "@/lib/facturas";
 import { createPDF } from "@/utils/createPDF";
 import { useClientes } from "@/providers/Clientes";
@@ -68,7 +68,7 @@ export function FacturasMostar({ facturas }: { facturas: FacturaType[] }) {
 
                 return (
                   <button
-                    className="flex flex-row justify-between items-center px-4 py-4 m-1 border-[0.5px] w-full max-w-[400px] gap-2"
+                    className="flex flex-row justify-between items-center px-4 py-4 m-1 rounded border-black border-[0.5px] w-full max-w-[400px] gap-2"
                     key={factura.id}
                     onContextMenu={(e) => {
                       e.preventDefault();
@@ -123,14 +123,39 @@ export function FacturasMostar({ facturas }: { facturas: FacturaType[] }) {
                   </button>
                   <button
                     className="py-4 border-b-[0.8px] flex flex-row pl-2 gap-4 w-full text-sm hover:bg-slate-200 transition-colors duration-500"
-                    onClick={(event) => {
+                    onClick={async (event) => {
                       event.stopPropagation();
 
-                      //setVisibleImpre(true);
+                      const pagadoo =
+                        selectedFactura.tipo === "crédito"
+                          ? selectedFactura.pagado
+                          : selectedFactura.productos.reduce(
+                              (acc, prod) => acc + prod.precio * prod.cantidad,
+                              0
+                            );
+
+                      try {
+                        const { pdf } = await createPDF(
+                          selectedFactura.productos,
+                          selectedFactura.nombre,
+                          selectedFactura.id,
+                          selectedFactura.fecha,
+                          selectedFactura.tipo,
+                          pagadoo,
+                          clientes
+                        );
+
+                        const res = await invoke("save_pdf", { pdfData: pdf });
+
+                        console.log(res);
+                        
+                      } catch (error) {
+                        console.log(error);
+                      }
                     }}
                   >
-                    <Printer size={20} />
-                    Imprimir
+                    <Save size={20} />
+                    Guardar
                   </button>
                   <button
                     className="py-4 border-b-[0.8px] flex flex-row pl-2 gap-4 w-full text-sm hover:bg-slate-200 transition-colors duration-500"
@@ -157,8 +182,8 @@ export function FacturasMostar({ facturas }: { facturas: FacturaType[] }) {
                       await invoke("share_pdf", { pdf });
                     }}
                   >
-                    <Share2 size={20} />
-                    Compartir
+                    <Printer size={20} />
+                    Imprimir
                   </button>
                   <button
                     disabled={
