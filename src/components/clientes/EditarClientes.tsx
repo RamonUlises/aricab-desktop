@@ -3,6 +3,7 @@ import { InputBottom } from "../InputBottom";
 import { X } from "../../icons/X";
 import { ClienteType } from "../../types/clientes";
 import { editarClientes, eliminarClientes } from "../../lib/clientes";
+import { confirm } from '@tauri-apps/plugin-dialog';
 
 export const EditarCliente = ({
   children,
@@ -98,7 +99,7 @@ export const EditarCliente = ({
         open={elim}
       >
         <button onClick={async () => {
-          const res = confirm("¿Estás seguro de eliminar el producto?");
+          const res = await confirm("¿Estás seguro de eliminar el cliente?");
 
           if (res) {
             await eliminarClientes(clienteA.id);

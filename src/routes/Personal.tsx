@@ -5,6 +5,7 @@ import { useState } from "react";
 import { usePersonal } from "@/providers/Personal";
 import { UserX } from "lucide-react";
 import { eliminarPersonal } from "@/lib/personal";
+import { confirm } from "@tauri-apps/plugin-dialog";
 
 export const Personal = () => {
   const { personal } = usePersonal();
@@ -83,7 +84,7 @@ export const Personal = () => {
                         setVisible(true);
                       }} className="bg-green-600 text-white font-semibold text-sm px-2 py-1 rounded">Editar</button>
                       <button onClick={async () => {
-                        const response = confirm("¿Estás seguro de eliminar este personal?");
+                        const response = await confirm("¿Estás seguro de eliminar este personal?");
 
                         if(!response) return;
 

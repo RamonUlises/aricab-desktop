@@ -7,6 +7,7 @@ export interface ProductoFacturaType {
 
 export interface FacturaType {
   id: string;
+  'id-facturador': string;
   nombre: string;
   fecha: Date;
   productos: ProductoFacturaType[];

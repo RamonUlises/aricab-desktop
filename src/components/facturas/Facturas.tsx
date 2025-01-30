@@ -7,11 +7,14 @@ import { deleteFactura } from "@/lib/facturas";
 import { createPDF } from "@/utils/createPDF";
 import { useClientes } from "@/providers/Clientes";
 import { invoke } from "@tauri-apps/api/core";
+import { useRutas } from "@/providers/Rutas";
+import { confirm } from '@tauri-apps/plugin-dialog';
 
 export type modalVisible = null | "ver" | "abonar" | "menu";
 
 export function FacturasMostar({ facturas }: { facturas: FacturaType[] }) {
   const { clientes } = useClientes();
+  const { rutas } = useRutas();
 
   // Agrupar facturas por fecha y hora (sin segundos) para mostrarlas en la lista, ordenar
   const facturasPorFecha = facturas.reduce(
@@ -86,6 +89,9 @@ export function FacturasMostar({ facturas }: { facturas: FacturaType[] }) {
                       </p>
                       <p className="text-[12px] -mt-1 text-zinc-800">
                         Hora: {hora}
+                      </p>
+                      <p className="text-[12px] -mt-1 text-zinc-800">
+                        Facturador: {rutas.find(rt => rt.id === factura["id-facturador"])?.usuario}{" "}
                       </p>
                     </div>
                     <div>
@@ -204,7 +210,7 @@ export function FacturasMostar({ facturas }: { facturas: FacturaType[] }) {
                     onClick={async (event) => {
                       event.stopPropagation();
 
-                      const res = confirm(
+                      const res = await confirm(
                         "¿Estás seguro de eliminar esta factura?"
                       );
                       if (!res) return;

@@ -2,6 +2,7 @@ import { server } from "../lib/server";
 import { ActuType } from "../types/actu";
 import { invoke } from "@tauri-apps/api/core";
 import { openUrl } from '@tauri-apps/plugin-opener';
+import { confirm } from '@tauri-apps/plugin-dialog';
 
 export async function actualizacion() {
   try {
@@ -12,10 +13,10 @@ export async function actualizacion() {
     });
 
     const data: ActuType = await response.json();
-    const currentVersion = "1.1.1";
+    const currentVersion = "1.1.2";
 
     if (data.version !== currentVersion) {
-      const userResponse = confirm(
+      const userResponse = await confirm(
         `Nueva versión disponible: ${data.version}. ¿Quieres actualizar?`
       );
 
@@ -36,7 +37,7 @@ export async function actualizacion() {
 
         if(downPath.toLowerCase().includes("error")) return;
 
-        const confirmation = confirm("La aplicación se descargó correctamente. ¿Deseas reiniciar para completar la instalación?");
+        const confirmation = await confirm("La aplicación se descargó correctamente. ¿Deseas reiniciar para completar la instalación?");
 
         if(confirmation){
           await invoke('install_update', { path: downPath });

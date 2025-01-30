@@ -42,7 +42,7 @@ export const Clientes = () => {
           className="bg-slate-400 text-black placeholder:text-black px-2 w-full max-w-[360px] outline-none rounded-md py-1 text-sm"
         />
       </div>
-      <div className="px-3 mt-2">
+      <div className="px-3 mt-2 pb-2">
         {clientesSeleccionados.length === 0 ? (
           <div className="flex justify-center items-center h-96">
             <h1 className="text-3xl font-bold">No hay clientes</h1>

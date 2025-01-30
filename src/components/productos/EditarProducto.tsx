@@ -3,6 +3,7 @@ import { InputBottom } from "../InputBottom";
 import { X } from "../../icons/X";
 import { ProductoType } from "../../types/productos";
 import { editarProducto, eliminarProducto } from "../../lib/productos";
+import { confirm } from '@tauri-apps/plugin-dialog';
 
 export const EditarProducto = ({
   children,
@@ -107,7 +108,7 @@ export const EditarProducto = ({
         open={elim}
       >
         <button onClick={async () => {
-          const res = confirm("¿Estás seguro de eliminar el producto?");
+          const res = await confirm("¿Estás seguro de eliminar el producto?");
 
           if (res) {
             await eliminarProducto(productoA.id);
