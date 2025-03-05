@@ -1,11 +1,12 @@
+import { RegistroType } from "@/types/registro";
 import { ProductoFacturaType } from "../types/facturas";
 import { ProductoType } from "../types/productos";
 import { Productos } from "../types/rutasProductos";
 import { server } from "./server";
 
-export async function agregarRuta(usuario: string, password: string): Promise<string> {
+export async function agregarRuta(usuario: string, password: string, dias: string[]): Promise<string> {
   try{
-    const response = await window.pet.post(`${server.url}/rutas`, { usuario, password }) as { message: string };
+    const response = await window.pet.post(`${server.url}/rutas`, { usuario, password, dias }) as { message: string };
 
     return response.message;
   } catch(error){
@@ -45,9 +46,9 @@ export async function obtenerProductosRuta(ruta: string) {
   }
 }
 
-export async function actualizarProductosRuta(ruta: string, productos: Productos[], newProductos: ProductoType[] ) {
+export async function actualizarProductosRuta(ruta: string, productos: Productos[], newProductos: ProductoType[], registro: RegistroType) {
   try {
-    const response = await window.pet.put(`${server.url}/rutas/${ruta}/productos`, { productos, newProductos }) as { message: string }
+    const response = await window.pet.put(`${server.url}/rutas/${ruta}/productos`, { productos, newProductos, registro }) as { message: string }
 
     return response.message;
   } catch {

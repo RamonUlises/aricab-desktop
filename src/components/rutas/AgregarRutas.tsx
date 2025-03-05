@@ -29,7 +29,7 @@ export const AgregarRutas = () => {
     }
 
     try {
-      const response = await agregarRuta(ruta.usuario, ruta.password);
+      const response = await agregarRuta(ruta.usuario, ruta.password, dias);
 
       if(response !== "Usuario creado"){
         setAlerta(response);

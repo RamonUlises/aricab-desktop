@@ -168,6 +168,6 @@ pub fn save_pdf(app_handle: tauri::AppHandle, pdf_data: Vec<u8>) -> Result<(), S
             file.write_all(&pdf_data).map_err(|e| e.to_string())?;
             Ok(())
         }
-        None => Err("No se seleccionó ninguna ruta de archivo".to_string()),
+        None => Err("No se seleccionó un archivo".to_string()),
     }
 }  

@@ -104,7 +104,7 @@ export function FacturasMostar({ facturas }: { facturas: FacturaType[] }) {
               })}
 
               <div
-                className="w-screen h-screen fixed bg-black/40 z-50 top-0 left-0 over-hidden justify-center items-center cursor-pointer "
+                className="w-screen h-screen fixed bg-black/40 z-50 top-0 left-0 over-hidden justify-center items-center cursor-pointer"
                 style={{
                   display: modalVisible === "menu" ? "flex" : "none",
                 }}

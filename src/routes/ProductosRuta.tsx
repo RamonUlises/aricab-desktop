@@ -6,11 +6,23 @@ import { RutasProductosType } from "../types/rutasProductos";
 import { actualizarProductosRuta, obtenerProductosRuta } from "../lib/rutas";
 import { useProductos } from "../providers/Productos";
 import { ProductoType } from "../types/productos";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { CrearHoja } from "@/components/rutas/CrearHoja";
+import { useRegistro } from "@/providers/Registro";
+import { RegistroType } from "@/types/registro";
 
 export const ProductosRuta = () => {
   const { id } = useParams();
   const { rutas } = useRutas();
   const { productos } = useProductos();
+  const { registros } = useRegistro();
   const ruta = rutas.find((ruta) => ruta.id === id);
   const navigate = useNavigate();
 
@@ -21,6 +33,11 @@ export const ProductosRuta = () => {
   );
 
   const [newProductos, setNewProductos] = useState(productos);
+
+  const [diaSelect, setDiaSelect] = useState<string | null>(null);
+  const [hojaSelect, setHojaSelect] = useState<RegistroType | null>(null);
+
+  const [editHoja, setEditHoja] = useState(false);
 
   async function obtenerProductos() {
     try {
@@ -65,6 +82,17 @@ export const ProductosRuta = () => {
     precio: number,
     cantidad: number
   ) {
+    if (diaSelect === null) {
+      alert("Selecciona un día");
+      return;
+    }
+    if (hojaSelect === null) {
+      alert("Selecciona una hoja");
+      return;
+    }
+
+    setEditHoja(true);
+
     setRutaPrd((prevState) => {
       const productosActuales = prevState.productos;
 
@@ -95,22 +123,49 @@ export const ProductosRuta = () => {
     setNewProductos((prev) => {
       const nuevosProductos: ProductoType[] = [];
 
-      prev.forEach(prd => {
-        if(prd.id === id){
-          nuevosProductos.push({ ...prd, cantidad: prd.cantidad - cantidad })
+      prev.forEach((prd) => {
+        if (prd.id === id) {
+          nuevosProductos.push({ ...prd, cantidad: prd.cantidad - cantidad });
         } else {
           nuevosProductos.push(prd);
         }
-      })
+      });
 
       return nuevosProductos;
-    })
+    });
     setCantidades((prev) => ({ ...prev, [id]: 0 }));
     const res = resProd[id] ?? 0;
-    setResProd((prev) => ({ ...prev, [id]: res + cantidad}))
+    setResProd((prev) => ({ ...prev, [id]: res + cantidad }));
+
+    // Actualizar hoja dependiendo el dia
+    setHojaSelect((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        productos: {
+          ...prev.productos,
+          [diaSelect]: {
+            ...prev.productos[diaSelect],
+            [nombre]: prev.productos[diaSelect][nombre] + cantidad,
+          },
+        },
+      };
+    });
   }
 
-  function removeCantidad(id: string, cantidad: number) {
+  function removeCantidad(id: string, cantidad: number, nombre: string) {
+    if (diaSelect === null) {
+      alert("Selecciona un día");
+      return;
+    }
+    if (hojaSelect === null) {
+      alert("Selecciona una hoja");
+      return;
+    }
+
+    setEditHoja(true);
+
     setRutaPrd((prevState) => {
       const productosActuales = prevState.productos;
 
@@ -145,24 +200,54 @@ export const ProductosRuta = () => {
     setNewProductos((prev) => {
       const nuevosProductos: ProductoType[] = [];
 
-      prev.forEach(prd => {
-        if(prd.id === id){
-          nuevosProductos.push({ ...prd, cantidad: prd.cantidad + cantidad })
+      prev.forEach((prd) => {
+        if (prd.id === id) {
+          nuevosProductos.push({ ...prd, cantidad: prd.cantidad + cantidad });
         } else {
           nuevosProductos.push(prd);
         }
-      })
+      });
 
       return nuevosProductos;
-    })
+    });
     setCantidades((prev) => ({ ...prev, [id]: 0 }));
     const res = resProd[id] ?? 0;
-    setResProd((prev) => ({ ...prev, [id]: res - cantidad}))
+    setResProd((prev) => ({ ...prev, [id]: res - cantidad }));
+
+    // Actualizar hoja dependiendo el dia
+
+    setHojaSelect((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        productos: {
+          ...prev.productos,
+          [diaSelect]: {
+            ...prev.productos[diaSelect],
+            [nombre]: prev.productos[diaSelect][nombre] - cantidad,
+          },
+        },
+      };
+    });
   }
 
-  async function actualizarProductos(){
+  async function actualizarProductos() {
+    if (!diaSelect) {
+      alert("Selecciona un día");
+      return;
+    }
+    if (!hojaSelect) {
+      alert("Selecciona una hoja");
+      return;
+    }
     try {
-      await actualizarProductosRuta(rutaPrd.id, rutaPrd.productos, newProductos)
+      await actualizarProductosRuta(
+        rutaPrd.id,
+        rutaPrd.productos,
+        newProductos,
+        hojaSelect
+      );
     } finally {
       navigate("/rutas");
     }
@@ -173,6 +258,68 @@ export const ProductosRuta = () => {
       <h1 className="text-center font-bold mt-4 text-slate-200">
         Productos {ruta?.usuario}
       </h1>
+      {/* Seleccionar día */}
+      <section className="flex flex-row justify-between px-4">
+        <Select onValueChange={(value) => setDiaSelect(value)}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Selecciona el día" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {ruta?.dias.map((dia) => (
+                <SelectItem key={dia} value={dia}>
+                  {dia}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        {/* Seleccionar hoja */}
+        <Select
+          onValueChange={(value) => {
+            if (editHoja) {
+              alert(
+                "No puedes cambiar de hoja si ya has editado una, guarda los cambios primero"
+              );
+              return;
+            }
+
+            const hoja = registros.find((registro) => registro.id === value);
+
+            if (!hoja) return;
+
+            setHojaSelect(hoja);
+          }}
+        >
+          <SelectTrigger className="w-[240px]">
+            <SelectValue placeholder="Selecciona la hoja" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {registros.map((registro) => {
+                if(registro.ruta !== id) return null;
+                if(registro.terminada) return null;
+                
+                return (
+                  <SelectItem
+                    disabled={editHoja}
+                    key={registro.id}
+                    value={registro.id}
+                  >
+                    {new Date(registro.fechaInicio).toLocaleDateString()} -{" "}
+                    {new Date(registro.fechaFin).toLocaleDateString()}
+                  </SelectItem>
+                );
+              })}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        {/* Opciones de hoja */}
+        {ruta && ruta.id && ruta.dias && (
+          <CrearHoja ruta={ruta.id} productos={productos} dias={ruta.dias} />
+        )}
+      </section>
+      {/* Productos */}
       {rutaPrd.productos && productos.length === 0 ? (
         <h2 className="text-center text-slate-200 mt-4">No hay productos</h2>
       ) : (
@@ -231,7 +378,11 @@ export const ProductosRuta = () => {
                       />
                       <button
                         onClick={() =>
-                          removeCantidad(producto.id, cantidades[producto.id])
+                          removeCantidad(
+                            producto.id,
+                            cantidades[producto.id],
+                            producto.nombre
+                          )
                         }
                         disabled={exist || cantidad < cantidades[producto.id]}
                         className="disabled:bg-red-400 bg-red-500 rounded-full w-7 h-7"
@@ -249,7 +400,12 @@ export const ProductosRuta = () => {
           </table>
         </>
       )}
-      <button onClick={actualizarProductos} className="bg-green-500 text-white hover:bg-green-600 transition-colors duration-300 absolute bottom-0 right-0 m-8 z-50 px-4 py-2 rounded-md">Guardar</button>
+      <button
+        onClick={actualizarProductos}
+        className="bg-green-500 text-white hover:bg-green-600 transition-colors duration-300 absolute bottom-0 right-0 m-8 z-50 px-4 py-2 rounded-md"
+      >
+        Guardar
+      </button>
     </Layout>
   );
 };
