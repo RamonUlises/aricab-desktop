@@ -71,6 +71,11 @@ export default function FacturasProvider ({ children }: { children: React.ReactN
       });
     });
 
+    socket.on('updateName', async () => {
+      setFacturas([]);
+      await fetchFacturas();
+    });
+
     fetchFacturas();
 
     return () => {
@@ -78,6 +83,7 @@ export default function FacturasProvider ({ children }: { children: React.ReactN
       socket.off('facturaUpdate');
       socket.off('facturaDelete');
       socket.off('facturaAbonar');
+      socket.off('updateName');
     }
   }, []);
 
