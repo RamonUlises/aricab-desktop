@@ -145,10 +145,10 @@ export async function createRegistro(ruta: RutasTypes, hoja: RegistroType, produ
             <td style="border: 1px solid #000; padding-bottom: 16px; padding-left: 8px; text-align: start">${prd.nombre}</td>
             ${ruta.dias.map(dia => `
               <td style="text-align: center; border: 1px solid #000; padding-bottom: 16px">
-                ${hoja.productos[dia][prd.nombre] === 0 ? "" : hoja.productos[dia][prd.nombre]}
+                ${hoja.productos[dia][prd.nombre] === 0 || hoja.productos[dia][prd.nombre] == undefined  ? "" : hoja.productos[dia][prd.nombre]}
               </td>
             `).join("")}
-            ${hoja.terminada ? `<td style="text-align: center; border: 1px solid #000; padding-bottom: 16px">${hoja.sobrantes[prd.nombre]}</td>` : ""}
+            ${hoja.terminada ? `<td style="text-align: center; border: 1px solid #000; padding-bottom: 16px">${hoja.sobrantes[prd.nombre] == undefined || hoja.sobrantes[prd.nombre] === 0 ? 0 : hoja.sobrantes[prd.nombre]}</td>` : ""}
           </tr>
         `).join("")}
       </tbody>
