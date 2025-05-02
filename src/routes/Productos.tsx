@@ -3,7 +3,6 @@ import { AgregarProductos } from "../components/productos/AgregarProductos";
 import { MostarProductos } from "../components/productos/MostarProductos";
 import { Layout } from "../layouts/Layout";
 import { useProductos } from "../providers/Productos";
-import { busquedaProductos } from "../utils/busquedaProductos";
 
 export const Productos = () => {
   const { productos } = useProductos();
@@ -23,7 +22,11 @@ export const Productos = () => {
       return;
     }
 
-    setProductosFiltrados(busquedaProductos(productos, event.target.value) || []);
+    const productosFiltrados = productos.filter((producto) => {
+      return producto.nombre.toLowerCase().includes(busqueda.toLowerCase());
+    });
+
+    setProductosFiltrados(productosFiltrados);
   }
 
   return (

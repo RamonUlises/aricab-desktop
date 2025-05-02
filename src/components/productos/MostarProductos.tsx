@@ -17,7 +17,7 @@ export const MostarProductos = ({
   );
 
   return (
-    <div className="mt-5 w-[97%] mx-auto">
+    <div className="mt-5 w-[97%] mx-auto pb-7">
       <table className="table-products w-full border-collapse ">
         <thead className="bg-green-400">
           <tr className="text-sm">
@@ -46,7 +46,7 @@ export const MostarProductos = ({
                 C${producto.cantidad * producto.precioVenta}
               </td>
               <td className="border px-2 py-2 text-center">
-                C${producto.cantidad * producto.precioVenta - producto.cantidad * producto.precioCompra}
+              C${parseFloat(((producto.cantidad * producto.precioVenta) - (producto.cantidad * producto.precioCompra)).toFixed(2))}
               </td>
             </tr>
           ))}
@@ -55,15 +55,15 @@ export const MostarProductos = ({
       <div className="w-full flex justify-end mt-5 text-sm">
         <div className="w-[120px] border border-black">
           <p className="text-center bg-green-400">Total compra</p>
-          <p className="text-zinc-800 text-center">C$ {totalCompra}</p>
+          <p className="text-zinc-800 text-center">C$ {parseFloat(totalCompra.toFixed(2))}</p>
         </div>
         <div className="w-[120px] border border-black">
           <p className="text-center bg-green-400 ">Total </p>
-          <p className="text-zinc-800 text-center">C$ {totalVenta}</p>
+          <p className="text-zinc-800 text-center">C$ {parseFloat(totalVenta.toFixed(2))}</p>
         </div>
         <div className="w-[120px] border border-black">
           <p className="text-center bg-green-400">Diferencia </p>
-          <p className="text-zinc-800 text-center">C$ {totalVenta - totalCompra}</p>
+          <p className="text-zinc-800 text-center">C$ {parseFloat((totalVenta - totalCompra).toFixed(2))}</p>
         </div>
       </div>
     </div>

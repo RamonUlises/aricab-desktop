@@ -25,7 +25,9 @@ export default function PersonalProvider ({ children }: { children: React.ReactN
       
       setPersonal([]);
       
-      setPersonal(data);
+      if(response.status === 200) {
+        setPersonal(data);
+      }
 
       setLoading(false);
     } catch {
