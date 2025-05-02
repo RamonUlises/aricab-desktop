@@ -104,7 +104,7 @@ export const EditarProducto = ({
       </button>
       <dialog
         onClick={() => setElim(false)}
-        className="top-0 left-0 justify-center items-center w-screen h-screen bg-transparent"
+        className="top-0 left-0 justify-center items-center w-screen h-screen bg-transparent fixed"
         open={elim}
       >
         <button onClick={async () => {
@@ -120,7 +120,7 @@ export const EditarProducto = ({
       <dialog
         className={`${
           visible && "flex"
-        } w-screen h-screen bg-black/70 top-0 left-0 justify-center items-center`}
+        } w-screen h-screen bg-black/70 top-0 left-0 justify-center items-center fixed`}
         open={visible}
       >
         <div className="flex justify-end">
