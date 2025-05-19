@@ -18,7 +18,7 @@ export const VerFactura = ({
         visible ? "flex" : "hidden"
       } w-screen h-screen bg-black/50 justify-center items-center fixed top-0 left-0`}
     >
-      <div className="bg-white w-11/12 h-5/6 rounded-md px-3 py-2 relative max-w-96">
+      <div className="bg-white w-11/12 h-5/6 rounded-md px-3 py-2 relative max-w-96 overflow-y-auto">
         <button
           onClick={() => setVisible(null)}
           className="absolute top-2 right-2 w-8"

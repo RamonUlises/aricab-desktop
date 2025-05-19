@@ -4,18 +4,19 @@ import { useClientes } from "../providers/Clientes";
 import { useFacturas } from "../providers/FacturasProvider";
 import { AgregarClientes } from "../components/clientes/AgregarClientes";
 import { EditarCliente } from "../components/clientes/EditarClientes";
+import { ClienteType } from "@/types/clientes";
 
 export const Clientes = () => {
   const { clientes } = useClientes();
   const { facturas } = useFacturas();
-  const [clientesSeleccionados, setClientesSeleccionados] = useState(clientes);
+  const [clientesSeleccionados, setClientesSeleccionados] = useState<ClienteType[]>([]);
   const [busqueda, setBusqueda] = useState("");
 
   function filtrar(event: React.ChangeEvent<HTMLInputElement>) {
     setBusqueda(event.target.value);
 
     if (event.target.value === "") {
-      setClientesSeleccionados(clientes);
+      setClientesSeleccionados([]);
       return;
     }
 
@@ -26,7 +27,7 @@ export const Clientes = () => {
   }
 
   useEffect(() => {
-    setClientesSeleccionados(clientes);
+    setClientesSeleccionados([]);
   }, [clientes]);
 
   return (

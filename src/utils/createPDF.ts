@@ -109,53 +109,11 @@ export async function createPDF(
 
   return { pdf: pdfBytes };
 }
+import autoTable from "jspdf-autotable";
 
 export async function createRegistro(ruta: RutasTypes, hoja: RegistroType, productos: ProductoType[]) {
-
   const fechaInicio = new Date(hoja.fechaInicio).toLocaleDateString();
   const fechaFin = new Date(hoja.fechaFin).toLocaleDateString();
-
-  const htmlContent = `
-  <!DOCTYPE html>
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
-    <title>Factura</title>
-    <meta charset="UTF-8" />
-  </head>
-  <body style="display:flex; flex-direction: column;">
-    <h1 style="font-weight: bold; text-align: center; margin-bottom: 0px; font-size: 45px;">Ari-Cab</h1>
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding-inline: 20px;">
-      <p style="font-size: 20px; font-weight: bold">${fechaInicio} - ${fechaFin}</p>
-      <p style="font-size: 20px; font-weight: bold">${ruta.usuario}</p>
-    </div>
-    <table style="width: 100%; margin-inline: auto; margin-top: 15px">
-      <thead>
-        <tr style="font-size: 22px;">
-          <th style="border: 1px solid #000; padding-bottom: 16px; text-align: start; padding-left: 8px">Productos</th>
-          ${ruta.dias.map(dia => 
-            `<th style="width: 80px; border: 1px solid #000; padding-bottom: 16px;">${dia}</th>`
-          ).join("")}
-          ${hoja.terminada ? `<th style="width: 80px; border: 1px solid #000; padding-bottom: 18px; text-align: center; padding-left: 8px;">Sobrantes</th>` : ""}
-        </tr>
-      </thead>
-      <tbody>
-        ${productos.map(prd => `
-          <tr>
-            <td style="border: 1px solid #000; padding-bottom: 16px; padding-left: 8px; text-align: start">${prd.nombre}</td>
-            ${ruta.dias.map(dia => `
-              <td style="text-align: center; border: 1px solid #000; padding-bottom: 16px">
-                ${hoja.productos[dia][prd.nombre] === 0 || hoja.productos[dia][prd.nombre] == undefined  ? "" : hoja.productos[dia][prd.nombre]}
-              </td>
-            `).join("")}
-            ${hoja.terminada ? `<td style="text-align: center; border: 1px solid #000; padding-bottom: 16px">${hoja.sobrantes[prd.nombre] == undefined || hoja.sobrantes[prd.nombre] === 0 ? 0 : hoja.sobrantes[prd.nombre]}</td>` : ""}
-          </tr>
-        `).join("")}
-      </tbody>
-    </table>
-  </body>
-</html>
-`;
 
   const doc = new jsPDF({
     orientation: "p",
@@ -164,15 +122,48 @@ export async function createRegistro(ruta: RutasTypes, hoja: RegistroType, produ
     hotfixes: ["px_scaling"],
   });
 
-  await doc.html(htmlContent, {
-    width: 780,
-    windowWidth: 780,
-    x: 0,
-    y: 0,
-    margin: 5,
-    autoPaging: true,
+  doc.setFontSize(18);
+  doc.text("Ari-Cab", doc.internal.pageSize.getWidth() / 2, 40, { align: "center" });
+
+  doc.setFontSize(10);
+  doc.text(`${fechaInicio} - ${fechaFin}`, 20, 60);
+  doc.text(`${ruta.usuario}`, doc.internal.pageSize.getWidth() - 100, 60);
+
+  const headers = [
+    ["Productos", ...ruta.dias, hoja.terminada ? "Sobrantes" : null].filter(Boolean),
+  ];
+
+  const body = productos.map(prd => {
+    const row = [
+      prd.nombre,
+      ...ruta.dias.map(dia => {
+        const value = hoja.productos[dia]?.[prd.nombre];
+        return value === 0 || value == undefined ? "" : value;
+      }),
+    ];
+    if (hoja.terminada) {
+      const sobrante = hoja.sobrantes?.[prd.nombre] ?? 0;
+      row.push(sobrante === 0 ? "" : sobrante);
+    }
+    return row;
   });
 
+  autoTable(doc, {
+    startY: 80,
+    head: headers,
+    body: body,
+    styles: {
+      fontSize: 8,
+      cellPadding: 4,
+      textColor: [0, 0, 0],
+      lineColor: [0, 0, 0],
+    },
+    headStyles: {
+      fillColor: [0, 0, 0],
+      textColor: [255, 255, 255],
+    },
+    theme: "grid",
+  });
 
   const pdfData = doc.output("arraybuffer");
   const pdfBytes = new Uint8Array(pdfData);

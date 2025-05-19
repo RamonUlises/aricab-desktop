@@ -324,7 +324,7 @@ export const ProductosRuta = () => {
         <h2 className="text-center text-slate-200 mt-4">No hay productos</h2>
       ) : (
         <>
-          <table className="w-[97%] mx-auto mt-4 border-collapse table-products">
+          <table className="w-[97%] mx-auto my-4 border-collapse table-products">
             <thead className="text-sm bg-green-400">
               <tr>
                 <th className="py-2 pl-2">Producto</th>
@@ -402,7 +402,7 @@ export const ProductosRuta = () => {
       )}
       <button
         onClick={actualizarProductos}
-        className="bg-green-500 text-white hover:bg-green-600 transition-colors duration-300 absolute bottom-0 right-0 m-8 z-50 px-4 py-2 rounded-md"
+        className="bg-green-500 text-white hover:bg-green-600 transition-colors duration-300 fixed bottom-0 right-0 m-8 z-50 px-4 py-2 rounded-md"
       >
         Guardar
       </button>

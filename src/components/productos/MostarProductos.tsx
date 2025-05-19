@@ -40,10 +40,10 @@ export const MostarProductos = ({
               <td className="border px-2 py-2 text-center">C${producto.precioCompra}</td>
               <td className="border px-2 py-2 text-center">C${producto.precioVenta}</td>
               <td className="border px-2 py-2 text-center">
-                C${producto.cantidad * producto.precioCompra}
+                C${parseFloat((producto.cantidad * producto.precioCompra).toFixed(2))}
               </td>
               <td className="border px-2 py-2 text-center">
-                C${producto.cantidad * producto.precioVenta}
+                C${parseFloat((producto.cantidad * producto.precioVenta).toFixed(2))}
               </td>
               <td className="border px-2 py-2 text-center">
               C${parseFloat(((producto.cantidad * producto.precioVenta) - (producto.cantidad * producto.precioCompra)).toFixed(2))}
