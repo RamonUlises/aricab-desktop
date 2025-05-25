@@ -47,7 +47,6 @@ export const EditarProducto = ({
   async function editarrProducto() {
     if (
       producto.nombre === "" ||
-      producto.cantidad === 0 ||
       producto.precioCompra === 0 ||
       producto.precioVenta === 0
     ) {

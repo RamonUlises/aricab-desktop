@@ -36,7 +36,7 @@ export const AgregarProductos = () => {
   };
 
   async function enviarProducto() {
-    if(producto.nombre === "" || producto.cantidad === 0 || producto.precioCompra === 0 || producto.precioVenta === 0){
+    if(producto.nombre === "" || producto.precioCompra === 0 || producto.precioVenta === 0){
       setAlerta("Todos los campos son obligatorios");
       return;
     }

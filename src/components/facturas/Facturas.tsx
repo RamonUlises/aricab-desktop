@@ -151,9 +151,7 @@ export function FacturasMostar({ facturas }: { facturas: FacturaType[] }) {
                           clientes
                         );
 
-                        const res = await invoke("save_pdf", { pdfData: pdf });
-
-                        console.log(res);
+                        await invoke("save_pdf", { pdfData: pdf });
                         
                       } catch (error) {
                         console.log(error);

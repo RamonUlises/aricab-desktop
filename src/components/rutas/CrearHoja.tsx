@@ -27,6 +27,7 @@ export const CrearHoja = ({ ruta, productos, dias }: { ruta: string, productos: 
     }
     try {
       const productosObj: Record<string, ProductosDiasType> = {};
+      const cambios: Record<string, number> = {};
       const sobrantes: Record<string, number> = {};
 
       productos.forEach((producto) => {
@@ -35,9 +36,10 @@ export const CrearHoja = ({ ruta, productos, dias }: { ruta: string, productos: 
         });
 
         sobrantes[producto.nombre] = 0;
+        cambios[producto.nombre] = 0;
       });
 
-      const response = await crearRegistro(ruta, dateInicio.toString(), dateFin.toString(), productosObj, sobrantes);
+      const response = await crearRegistro(ruta, dateInicio.toString(), dateFin.toString(), productosObj, sobrantes, cambios);
 
       if(response === "Registro creado correctamente"){
         setOpen(false);

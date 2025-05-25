@@ -147,7 +147,7 @@ export const ProductosRuta = () => {
           ...prev.productos,
           [diaSelect]: {
             ...prev.productos[diaSelect],
-            [nombre]: prev.productos[diaSelect][nombre] + cantidad,
+            [nombre]: prev.productos[diaSelect][nombre] == null ? cantidad : prev.productos[diaSelect][nombre] + cantidad,
           },
         },
       };

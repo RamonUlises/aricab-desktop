@@ -45,7 +45,6 @@ export default function RegistroProvider ({ children }: { children: React.ReactN
     });
 
     socket.on('registroUpdate', (registro: RegistroType) => {
-      console.log("update", registro);
       setRegistro((prevRegis) => prevRegis.map((reg) => reg.id === registro.id ? registro : reg));
     });
 

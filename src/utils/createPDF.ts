@@ -130,9 +130,10 @@ export async function createRegistro(ruta: RutasTypes, hoja: RegistroType, produ
   doc.text(`${ruta.usuario}`, doc.internal.pageSize.getWidth() - 100, 60);
 
   const headers = [
-    ["Productos", ...ruta.dias, hoja.terminada ? "Sobrantes" : null].filter(Boolean),
+    ["Productos", ...ruta.dias, "Cambios", hoja.terminada ? "Sobrantes" : null, hoja.terminada ? "totales" : null].filter(Boolean),
   ];
 
+  let totalFinal = 0;
   const body = productos.map(prd => {
     const row = [
       prd.nombre,
@@ -141,9 +142,21 @@ export async function createRegistro(ruta: RutasTypes, hoja: RegistroType, produ
         return value === 0 || value == undefined ? "" : value;
       }),
     ];
+
+    const cambio = hoja.cambios?.[prd.nombre] ?? 0;
+    row.push(cambio === 0 || cambio == null ? "" : cambio);
+    
     if (hoja.terminada) {
       const sobrante = hoja.sobrantes?.[prd.nombre] ?? 0;
-      row.push(sobrante === 0 ? "" : sobrante);
+      row.push(sobrante === 0 || cambio == null ? "" : sobrante);
+      // Crear total en dinero, sumando todos los productos de la hoja menos los sobrantes por el precio del producto
+      const total = Object.values(hoja.productos).reduce((acc, dia) => {
+        const value = dia[prd.nombre];
+        return acc + (value === 0 || value == undefined ? 0 : value);
+      }
+      , 0) - sobrante;
+      totalFinal += Math.ceil(total * prd.precioVenta);
+      row.push(total * prd.precioVenta === 0 ? "" : `C$ ${Math.ceil(total * prd.precioVenta)}`);
     }
     return row;
   });
@@ -163,7 +176,13 @@ export async function createRegistro(ruta: RutasTypes, hoja: RegistroType, produ
       textColor: [255, 255, 255],
     },
     theme: "grid",
-  });
+  });  
+
+// Colocar el total después de la tabla
+const finalY = (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable?.finalY || 80; // Fallback en caso raro
+doc.setFontSize(8);
+doc.text("Total:", 20, finalY + 20);
+doc.text(`C$ ${totalFinal.toString()}`, doc.internal.pageSize.getWidth() - 100, finalY + 20);
 
   const pdfData = doc.output("arraybuffer");
   const pdfBytes = new Uint8Array(pdfData);

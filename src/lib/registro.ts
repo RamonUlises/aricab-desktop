@@ -5,10 +5,11 @@ export async function crearRegistro(
   fechaInicio: string,
   fechaFin: string,
   productos: Record<string, Record<string, number>>,
-  sobrantes: Record<string, number>
+  sobrantes: Record<string, number>,
+  cambios: Record<string, number>
 ){
   try{
-    const response = await window.pet.post(`${server.url}/registros`, { ruta, fechaInicio, fechaFin, productos, sobrantes }) as { message: string };
+    const response = await window.pet.post(`${server.url}/registros`, { ruta, fechaInicio, fechaFin, productos, sobrantes, cambios }) as { message: string };
 
     return response.message;
   } catch {

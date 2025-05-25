@@ -60,7 +60,6 @@ export default function FacturasProvider ({ children }: { children: React.ReactN
       setFacturas((prevFacturas) => {
         const updatedFacturas = prevFacturas.map((prevFactura) => {
           if(prevFactura.id === id){
-            console.log('updated', total);
             return { ...prevFactura, pagado: total };
           }
 

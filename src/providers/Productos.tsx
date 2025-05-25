@@ -51,7 +51,6 @@ export default function ProductosProvider ({ children }: { children: React.React
     });
 
     socket.on('productUpdate', (producto: ProductoType) => {
-      console.log("update")
       setProductos((prevProductos) => {
         const updateProductos = prevProductos.map((prevProducto) => {
           if (prevProducto.id === producto.id) {
