@@ -96,6 +96,9 @@ export function FacturasMostar({ facturas }: { facturas: FacturaType[] }) {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-zinc-800">
+                        C$ {factura.total}
+                      </p>
+                      <p className="text-[12px] font-medium text-zinc-500">
                         C$ {factura.total - factura.pagado}
                       </p>
                     </div>
@@ -213,7 +216,7 @@ export function FacturasMostar({ facturas }: { facturas: FacturaType[] }) {
                       );
                       if (!res) return;
 
-                      await deleteFactura(selectedFactura.id);
+                      await deleteFactura(selectedFactura.id, selectedFactura["id-facturador"]);
                       setModalVisible(null);
                     }}
                   >

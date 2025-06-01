@@ -50,13 +50,14 @@ export function pet() {
     }
   }
 
-  async function deletee(url: string) {
+  async function deletee(url: string, body?: unknown) {
     try {
       const response = await fetch(url, {
         method: "DELETE",
         headers: {
           'Authorization': `Basic ${server.credetials}`
-        }
+        },
+        body: JSON.stringify(body),
       });
 
       return response.json();

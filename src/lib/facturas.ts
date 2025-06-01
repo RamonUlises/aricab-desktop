@@ -10,10 +10,15 @@ export async function abonarFacturaServer({ id, abono }: { id: string, abono: nu
   }
 }
 
-export async function deleteFactura(id: string) {
+export async function deleteFactura(id: string, facturador: string) {
   try {
-    await window.pet.deletee(`${server.url}/facturas/${id}`);
-
+    const url = `${server.url}/facturas/${id}/facturador/${facturador}`;
+    await fetch(url, {
+      method: "DELETE",
+      headers: {
+        'Authorization': `Basic ${server.credetials}`
+      }
+    });
     return false;
   } catch {
     return false;

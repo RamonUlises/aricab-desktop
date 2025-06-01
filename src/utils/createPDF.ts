@@ -149,12 +149,12 @@ export async function createRegistro(ruta: RutasTypes, hoja: RegistroType, produ
     if (hoja.terminada) {
       const sobrante = hoja.sobrantes?.[prd.nombre] ?? 0;
       row.push(sobrante === 0 || cambio == null ? "" : sobrante);
-      // Crear total en dinero, sumando todos los productos de la hoja menos los sobrantes por el precio del producto
+      // Crear total en dinero, sumando todos los productos de la hoja menos los sobrantes y cambios por el precio del producto
       const total = Object.values(hoja.productos).reduce((acc, dia) => {
         const value = dia[prd.nombre];
         return acc + (value === 0 || value == undefined ? 0 : value);
       }
-      , 0) - sobrante;
+      , 0) - sobrante - cambio;
       totalFinal += Math.ceil(total * prd.precioVenta);
       row.push(total * prd.precioVenta === 0 ? "" : `C$ ${Math.ceil(total * prd.precioVenta)}`);
     }

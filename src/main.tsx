@@ -9,7 +9,7 @@ declare global {
       get: (url: string) => Promise<unknown>;
       post: (url: string, body: unknown) => Promise<unknown>;
       put: (url: string, body: unknown) => Promise<unknown>;
-      deletee: (url: string) => Promise<unknown>;
+      deletee: (url: string, body?: unknown) => Promise<unknown>;
     };
   }
 }
