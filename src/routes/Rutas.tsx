@@ -14,7 +14,7 @@ import { useRegistro } from "@/providers/Registro";
 import { useProductos } from "@/providers/Productos";
 import { terminarRegistro } from "@/lib/registro";
 
-type RegistroVisible = 'imprimir' | 'eliminar' | null;
+type RegistroVisible = 'imprimir' | 'eliminar' | 'resumen' | null;
 
 export const Rutas = () => {
   const { rutas } = useRutas();
@@ -108,6 +108,23 @@ export const Rutas = () => {
                 >
                   Imprimir registro
                 </button>
+                <button className="font-semibold hover:bg-white hover:text-green-500 transition-colors duration-300 text-center w-full py-2" onClick={(event) => {
+                    event.stopPropagation();
+
+                    const registro = registros.find(
+                      (reg) => reg.ruta === ruta.id
+                    );
+
+                    if (!registro) {
+                      alert("No hay registro para esta ruta");
+                      return;
+                    }
+
+                    setRutaSelect(ruta);
+                    setVisibleRegistro('resumen');
+                  }}>
+                  Resumen de registro
+                </button>
                 <button
                   onClick={async (event) => {
                     event.stopPropagation();
@@ -181,12 +198,12 @@ export const Rutas = () => {
       <AgregarRutas />
       <section
         className={`fixed inset-0 bg-black bg-opacity-50 p-6 z-50 h-full ${
-          visibleRegistro === "imprimir" || visibleRegistro === "eliminar" ? "flex" : "hidden"
+          visibleRegistro === "imprimir" || visibleRegistro === "eliminar" || visibleRegistro === 'resumen' ? "flex" : "hidden"
         }`}
       >
         <div className="bg-white w-full max-w-[600px] mx-auto p-4 rounded-lg h-full overflow-hidden flex flex-col">
           <h2 className="text-xl font-bold text-center text-zinc-800">
-            {visibleRegistro === "imprimir" ? "Imprimir registro" : "Eliminar registro"}
+            {visibleRegistro === "imprimir" ? "Imprimir registro" : visibleRegistro === 'resumen' ? 'Resumen de registro' : 'Eliminar registro'}
           </h2>
           <div className="flex flex-col gap-4 mt-4 overflow-y-auto flex-1">
             {registros
@@ -197,6 +214,7 @@ export const Rutas = () => {
                 <div
                 onClick={async () => {
                   if(visibleRegistro === 'eliminar') {
+                    if(!reg.terminada) return;
                     const resp = await confirm("¿Estás seguro de eliminar el registro?");
 
                     if(!resp) return;
@@ -205,6 +223,9 @@ export const Rutas = () => {
                   } else if(visibleRegistro === 'imprimir') {
                     const { pdf } = await createRegistro(rutaSelect, reg, productos);
                     await invoke("share_pdf", { pdf });
+                  } else if(visibleRegistro === 'resumen') {
+                    if(!reg.terminada) return;
+                    navigate(`/registros/${reg.id}`);
                   }
 
                     setVisibleRegistro(null);
