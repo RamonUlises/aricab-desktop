@@ -40,7 +40,6 @@ export const Inicio = () => {
             <p>C$ {facturasCount.total ?? 0}</p>
           </div>
         </div>
-        <h3 className="text-center font-semibold mt-8 text-xl">Comparación de ventas por semana</h3>
         <ComparacionSemanalChart />
       </div>
     </Layout>
