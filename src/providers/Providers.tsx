@@ -4,6 +4,7 @@ import ClientesProvider from "./Clientes";
 import FacturasProvider from "./FacturasProvider";
 import PersonalProvider from "./Personal";
 import RegistroProvider from "./Registro";
+import CreditosProvider from "./Creditos";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -12,7 +13,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <RutasProvider>
           <ClientesProvider>
             <PersonalProvider>
-              <RegistroProvider>{children}</RegistroProvider>
+              <RegistroProvider>
+                <CreditosProvider>{children}</CreditosProvider>
+              </RegistroProvider>
             </PersonalProvider>
           </ClientesProvider>
         </RutasProvider>
