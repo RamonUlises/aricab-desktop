@@ -11,6 +11,7 @@ import Providers from "./providers/Providers";
 import { useEffect, useState } from "react";
 import { TresEnRaya } from "./components/TresEnRaya";
 import { ResumenRegistro } from "./routes/ResumenRegistro";
+import { Creditos } from "./routes/Creditos";
 
 function App() {
   // Verificar conexión a internet
@@ -38,6 +39,7 @@ function App() {
               <Route path="/personal" element={<Personal />} />
               <Route path="/clientes" element={<Clientes />} />
               <Route path="/facturas" element={<Facturas />} />
+              <Route path="/creditos" element={<Creditos />} />
               <Route path="/:id/productos" element={<ProductosRuta />} />
               <Route path="/registros/:id" element={<ResumenRegistro />} />
             </Routes>
