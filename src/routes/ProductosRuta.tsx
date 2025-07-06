@@ -17,6 +17,11 @@ import {
 import { CrearHoja } from "@/components/rutas/CrearHoja";
 import { useRegistro } from "@/providers/Registro";
 import { RegistroType } from "@/types/registro";
+import { server } from "@/lib/server";
+import { io } from "socket.io-client";
+import { FacturaType } from "@/types/facturas";
+
+const socket = io(server.url);
 
 export const ProductosRuta = () => {
   const { id } = useParams();
@@ -57,6 +62,23 @@ export const ProductosRuta = () => {
 
   useEffect(() => {
     obtenerProductos();
+
+    socket.on('facturaAdd', (factura: FacturaType) => {
+      if(factura["id-facturador"] === id){
+        alert("Se ha creado una nueva factura para este ruta");
+      }
+    });
+
+    socket.on('cambioAdd', ({ facturador }: { facturador: string }) => {
+      if(facturador === id){
+        alert("Se ha creado una nueva factura para este ruta");
+      }
+    });
+
+    return () => {
+      socket.off('facturaAdd');
+      socket.off('cambioAdd');
+    }
   }, []);
 
   function change(event: React.ChangeEvent<HTMLInputElement>, id: string) {
@@ -147,7 +169,10 @@ export const ProductosRuta = () => {
           ...prev.productos,
           [diaSelect]: {
             ...prev.productos[diaSelect],
-            [nombre]: prev.productos[diaSelect][nombre] == null ? cantidad : prev.productos[diaSelect][nombre] + cantidad,
+            [nombre]:
+              prev.productos[diaSelect][nombre] == null
+                ? cantidad
+                : prev.productos[diaSelect][nombre] + cantidad,
           },
         },
       };
@@ -297,9 +322,9 @@ export const ProductosRuta = () => {
           <SelectContent>
             <SelectGroup>
               {registros.map((registro) => {
-                if(registro.ruta !== id) return null;
-                if(registro.terminada) return null;
-                
+                if (registro.ruta !== id) return null;
+                if (registro.terminada) return null;
+
                 return (
                   <SelectItem
                     disabled={editHoja}
