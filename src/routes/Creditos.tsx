@@ -18,8 +18,9 @@ export const Creditos = () => {
   return (
     <Layout>
       <h1 className="text-center font-bold mt-4 text-zinc-800">Créditos</h1>
-      <div className="px-3">
+      <div className="px-5 flex justify-between">
         <CrearCredito />
+        <p>Total: C${creditos.reduce((acum, credito) => acum + (credito.monto - credito.abono), 0).toFixed(2)}</p>
       </div>
       {creditos.length === 0 ? (
         <p className="text-center font-bold mt-4 text-zinc-800">
