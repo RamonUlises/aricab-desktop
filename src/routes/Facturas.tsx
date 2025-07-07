@@ -22,12 +22,15 @@ import { es } from "date-fns/locale";
 import { FacturaType } from "@/types/facturas";
 import { server } from "@/lib/server";
 
+type filterType = "fecha" | "credito" | null;
+
 export const Facturas = () => {
   const { facturas } = useFacturas();
   const [facturasSeleccionadas, setFacturasSeleccionadas] = useState(facturas);
   const [date1, setDate1] = useState<Date | undefined>(undefined);
   const [date2, setDate2] = useState<Date | undefined>(undefined);
   const [loading, setLoading] = useState(false);
+  const [filter, setFilter] = useState<filterType>(null);
 
   useEffect(() => {
     setFacturasSeleccionadas(facturas);
@@ -42,6 +45,7 @@ export const Facturas = () => {
     }
 
     setLoading(true);
+    setFilter("fecha");
 
     const fechaFormateada1 = date1.toISOString().split("T")[0];
     const fechaFormateada2 = date2.toISOString().split("T")[0];
@@ -51,7 +55,35 @@ export const Facturas = () => {
 
   async function searchFacturas(fecha1: string, fecha2: string) {
     try {
-      const response = await fetch(`${server.url}/facturas/rango/${fecha1}/${fecha2}`, {
+      const response = await fetch(
+        `${server.url}/facturas/rango/${fecha1}/${fecha2}`,
+        {
+          headers: {
+            Authorization: `Basic ${server.credetials}`,
+          },
+        }
+      );
+      const data: FacturaType[] = await response.json();
+
+      if (Array.isArray(data)) {
+        setFacturasSeleccionadas(data);
+      } else {
+        setFacturasSeleccionadas([]);
+      }
+
+      setLoading(false);
+    } catch {
+      setFacturasSeleccionadas([]);
+      setLoading(false);
+    }
+  }
+
+  async function filterFacturasCreditos() {
+    try {
+      setFilter("credito");
+      setLoading(true);
+
+      const response = await fetch(`${server.url}/facturas/creditos/no-canceladas`, {
         headers: {
           Authorization: `Basic ${server.credetials}`,
         },
@@ -66,8 +98,8 @@ export const Facturas = () => {
 
       setLoading(false);
     } catch {
-      setFacturasSeleccionadas([]);
       setLoading(false);
+      setFacturasSeleccionadas([]);
     }
   }
 
@@ -130,7 +162,7 @@ export const Facturas = () => {
             </PopoverContent>
           </Popover>
           <button
-            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 text-sm transition-colors duration-300"
+            className={` bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 text-sm transition-colors duration-300`}
             onClick={() => {
               filterFacturas();
             }}
@@ -138,11 +170,22 @@ export const Facturas = () => {
             filtrar
           </button>
           <button
-            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 text-sm transition-colors duration-300"
+            className={`bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 text-sm transition-colors duration-300`}
+            onClick={() => {
+              filterFacturasCreditos();
+            }}
+          >
+            fac. créditos
+          </button>
+          <button
+            className={`${
+              filter === null && "hidden"
+            } bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 text-sm transition-colors duration-300`}
             onClick={() => {
               setDate1(undefined);
               setDate2(undefined);
               setFacturasSeleccionadas(facturas);
+              setFilter(null);
             }}
           >
             eliminar filtro
