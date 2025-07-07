@@ -13,7 +13,7 @@ export async function actualizacion() {
     });
 
     const data: ActuType = await response.json();
-    const currentVersion = "3.0.0";
+    const currentVersion = "3.1.0";
 
     if (data.version !== currentVersion) {
       const userResponse = await confirm(
