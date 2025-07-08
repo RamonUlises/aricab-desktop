@@ -5,7 +5,8 @@ export const verificarCreditosFecha = (creditos: CreditosType[]) => {
   // Solo nos interesa la fecha, no la hora
   hoy.setHours(0, 0, 0, 0);
 
-  creditos.forEach(credito => {
+  for(const credito of creditos) {
+    if(credito.abono === credito.monto) continue;
     const fechaFin = new Date(credito.fechaFin);
     fechaFin.setHours(0, 0, 0, 0);
 
@@ -15,8 +16,9 @@ export const verificarCreditosFecha = (creditos: CreditosType[]) => {
     // Convertimos a días
     const diasFaltantes = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
 
+
     if (diasFaltantes <= 5 && diasFaltantes >= 0) {
       alert(`Faltan ${diasFaltantes} días para que termine la factura de ${credito.proveedor}`);
     }
-  });
+  };
 };

@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { server } from "@/lib/server";
+import { abonarCredito } from "@/utils/abonarCredito";
 import { useRef, useState } from "react";
 
 export function AbonarCredito({
@@ -23,32 +23,6 @@ export function AbonarCredito({
   const [abonoCredito, setAbonoCredito] = useState(0);
   const cancelRef = useRef<HTMLButtonElement>(null);
 
-  async function abonarCredito() {
-    try {
-      const response = await window.pet.put(
-        `${server.url}/creditos/abonar/${id}`,
-        {
-          abono: abonoCredito,
-        }
-      ) as { message: string };
-
-      if (response.message === "Credito abonado") {
-        alert("Crédito abonado correctamente");
-
-        setTimeout(() => {
-          setAbonoCredito(0);
-          if (cancelRef.current) {
-            cancelRef.current.click();
-          }
-        }, 1000);
-        return;
-      }
-
-      alert("Error al actualizar crédito");
-    } catch {
-      alert("Error al actualizar crédito");
-    }
-  }
   return (
     <Dialog>
       <form>
@@ -82,7 +56,16 @@ export function AbonarCredito({
               <Button ref={cancelRef} variant="outline">Cancelar</Button>
             </DialogClose>
             <button
-              onClick={abonarCredito}
+              onClick={ async () => {
+                const res = await abonarCredito(id, abonoCredito);
+                setTimeout(() => {
+                  setAbonoCredito(0);
+                  if (cancelRef.current) {
+                    cancelRef.current.click();
+                  }
+                }, 1000);
+                if(res) alert("Crédito abonado correctamente");
+              }}
               className="text-sm bg-green-500 text-white rounded-md px-2 py-1"
               type="button"
             >

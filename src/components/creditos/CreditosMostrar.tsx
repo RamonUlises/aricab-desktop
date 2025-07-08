@@ -2,6 +2,7 @@ import { deleteCreditos } from "@/lib/creditos";
 import { CreditosType } from "@/types/creditos";
 import { confirm } from "@tauri-apps/plugin-dialog";
 import { AbonarCredito } from "./AbonarCredito";
+import { abonarCredito } from "@/utils/abonarCredito";
 
 export function CreditosMostrar({ creditos }: { creditos: CreditosType[] }) {
   async function deleteCredito(id: string) {
@@ -39,7 +40,8 @@ export function CreditosMostrar({ creditos }: { creditos: CreditosType[] }) {
                 <strong>Monto pagado: </strong>C${credito.abono}
               </p>
               <p className="text-sm">
-                <strong>Monto restante: </strong>C${credito.monto - credito.abono}
+                <strong>Monto restante: </strong>C$
+                {credito.monto - credito.abono}
               </p>
               <p className="text-sm">
                 <strong>Fecha creación: </strong>
@@ -49,7 +51,25 @@ export function CreditosMostrar({ creditos }: { creditos: CreditosType[] }) {
                 {new Date(credito.fechaFin).toLocaleDateString()}
               </p>
               <div className="w-full flex justify-end gap-2 mt-2">
-                <AbonarCredito id={credito.id} monto={credito.monto} abono={credito.abono} />
+                <AbonarCredito
+                  id={credito.id}
+                  monto={credito.monto}
+                  abono={credito.abono}
+                />
+                <button
+                  onClick={async () => {
+                    const res = await confirm(
+                      "¿Estás seguro de cancelar este crédito?"
+                    );
+                    if (!res) return;
+                    
+                    const resp = await abonarCredito(credito.id, credito.monto - credito.abono);
+                    if(resp) alert("Crédito cancelado correctamente");
+                  }}
+                  className="text-sm bg-blue-500 text-white rounded-md px-2 py-1"
+                >
+                  Cancelar
+                </button>
                 <button
                   onClick={async () => {
                     const res = await confirm(
