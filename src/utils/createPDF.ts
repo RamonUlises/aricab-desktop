@@ -36,7 +36,9 @@ export async function createPDF(
     <p style="text-align: center; margin-bottom: 1px; font-size: 16px"><strong>Teléfono:</strong> 88437565-89053304</p>
     <p style="text-align: center; margin-bottom: 1px; font-size: 16px"><strong>Cliente:</strong> ${cliente}</p>
     <p style="text-align: center; margin-bottom: 1px; font-size: 16px"><strong>Dirección:</strong> ${direccion}</p>
-    <p style="text-align: center; margin-bottom: 1px; font-size: 16px"><strong>Fecha:</strong> ${new Date(fecha).toLocaleDateString()}</p>
+    <p style="text-align: center; margin-bottom: 1px; font-size: 16px"><strong>Fecha:</strong> ${new Date(
+      fecha
+    ).toLocaleDateString()}</p>
     <p style="text-align: center; margin-bottom: 1px; font-size: 16px"><strong>Estado:</strong> ${estado}</p>
         <div style="max-width: 90%; width: 100%; height: 2px; background-color: #d1d1d1; margin-inline: auto; margin-top: 16px;"></div>
 
@@ -111,7 +113,11 @@ export async function createPDF(
 }
 import autoTable from "jspdf-autotable";
 
-export async function createRegistro(ruta: RutasTypes, hoja: RegistroType, productos: ProductoType[]) {
+export async function createRegistro(
+  ruta: RutasTypes,
+  hoja: RegistroType,
+  productos: ProductoType[]
+) {
   const fechaInicio = new Date(hoja.fechaInicio).toLocaleDateString();
   const fechaFin = new Date(hoja.fechaFin).toLocaleDateString();
 
@@ -123,21 +129,29 @@ export async function createRegistro(ruta: RutasTypes, hoja: RegistroType, produ
   });
 
   doc.setFontSize(18);
-  doc.text("Ari-Cab", doc.internal.pageSize.getWidth() / 2, 40, { align: "center" });
+  doc.text("Ari-Cab", doc.internal.pageSize.getWidth() / 2, 40, {
+    align: "center",
+  });
 
   doc.setFontSize(10);
   doc.text(`${fechaInicio} - ${fechaFin}`, 20, 60);
   doc.text(`${ruta.usuario}`, doc.internal.pageSize.getWidth() - 100, 60);
 
   const headers = [
-    ["Productos", ...ruta.dias, "Cambios", hoja.terminada ? "Sobrantes" : null, hoja.terminada ? "totales" : null].filter(Boolean),
+    [
+      "Productos",
+      ...ruta.dias,
+      "Cambios",
+      hoja.terminada ? "Sobrantes" : null,
+      hoja.terminada ? "totales" : null,
+    ].filter(Boolean),
   ];
 
   let totalFinal = 0;
-  const body = productos.map(prd => {
+  const body = productos.map((prd) => {
     const row = [
       prd.nombre,
-      ...ruta.dias.map(dia => {
+      ...ruta.dias.map((dia) => {
         const value = hoja.productos[dia]?.[prd.nombre];
         return value === 0 || value == undefined ? "" : value;
       }),
@@ -145,18 +159,24 @@ export async function createRegistro(ruta: RutasTypes, hoja: RegistroType, produ
 
     const cambio = hoja.cambios?.[prd.nombre] ?? 0;
     row.push(cambio === 0 || cambio == null ? "" : cambio);
-    
+
     if (hoja.terminada) {
       const sobrante = hoja.sobrantes?.[prd.nombre] ?? 0;
       row.push(sobrante === 0 || cambio == null ? "" : sobrante);
       // Crear total en dinero, sumando todos los productos de la hoja menos los sobrantes y cambios por el precio del producto
-      const total = Object.values(hoja.productos).reduce((acc, dia) => {
-        const value = dia[prd.nombre];
-        return acc + (value === 0 || value == undefined ? 0 : value);
-      }
-      , 0) - sobrante - cambio;
+      const total =
+        Object.values(hoja.productos).reduce((acc, dia) => {
+          const value = dia[prd.nombre];
+          return acc + (value === 0 || value == undefined ? 0 : value);
+        }, 0) -
+        sobrante -
+        cambio;
       totalFinal += Math.ceil(total * prd.precioVenta);
-      row.push(total * prd.precioVenta === 0 ? "" : `C$ ${Math.ceil(total * prd.precioVenta)}`);
+      row.push(
+        total * prd.precioVenta === 0
+          ? ""
+          : `C$ ${Math.ceil(total * prd.precioVenta)}`
+      );
     }
     return row;
   });
@@ -176,13 +196,33 @@ export async function createRegistro(ruta: RutasTypes, hoja: RegistroType, produ
       textColor: [255, 255, 255],
     },
     theme: "grid",
-  });  
+  });
 
-// Colocar el total después de la tabla
-const finalY = (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable?.finalY || 80; // Fallback en caso raro
-doc.setFontSize(8);
-doc.text("Total:", 20, finalY + 20);
-doc.text(`C$ ${totalFinal.toString()}`, doc.internal.pageSize.getWidth() - 100, finalY + 20);
+  // mostrar descuento
+  const finalDes =
+    (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable
+      ?.finalY || 80; // Fallback en caso raro
+  doc.setFontSize(8);
+  doc.text("Descuentos:", 20, finalDes + 20);
+  doc.text(
+    `C$ ${hoja.descuentos.toString()}`,
+    doc.internal.pageSize.getWidth() - 100,
+    finalDes + 20
+  );
+
+  // Colocar el total después de la tabla si la hoja está terminada
+  if (hoja.terminada) {
+    const finalY =
+      (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable
+        ?.finalY || 100; // Fallback en caso raro
+    doc.setFontSize(8);
+    doc.text("Total:", 20, finalY + 40);
+    doc.text(
+      `C$ ${(totalFinal - hoja.descuentos).toString()}`,
+      doc.internal.pageSize.getWidth() - 100,
+      finalY + 40
+    );
+  }
 
   const pdfData = doc.output("arraybuffer");
   const pdfBytes = new Uint8Array(pdfData);
