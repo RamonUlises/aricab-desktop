@@ -9,4 +9,5 @@ export interface RegistroType {
   sobrantes: Record<string, number>;
   cambios: Record<string, number>;
   terminada: boolean;
+  descuentos: number;
 }
