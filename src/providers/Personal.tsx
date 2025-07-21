@@ -70,7 +70,7 @@ export default function PersonalProvider ({ children }: { children: React.ReactN
   if(loading) {
     return (
       <div className="bg-slate-200 w-screen h-screen flex justify-center items-center">
-        <h1 className='text-3xl font-bold'>Cargando...</h1>
+        <h1 className='text-3xl font-bold'>Cargando personal...</h1>
       </div>
     )
   }
