@@ -210,6 +210,9 @@ export const Rutas = () => {
               .filter((reg) => {
                 return reg.ruta === rutaSelect.id;
               })
+              .sort((a, b) => {
+                return new Date(b.fechaInicio).getTime() - new Date(a.fechaInicio).getTime();
+              })
               .map((reg) => (
                 <div
                 onClick={async () => {
